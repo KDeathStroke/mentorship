@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <!-- Title of the Page -->
+    <title>BPIT | Sign Up</title>
+
+    <!-- Angular Js Library -->
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular-route.js"></script>
+    
+    <!-- Google Icons -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Roboto+Slab:300,400,700" rel="stylesheet">
+
+    <!-- Signup Stylesheet -->
+    <link rel="stylesheet" href="signup.css" />
+
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav></nav>
+
+    <!-- Heading of the page -->
+    <div id="pageHeading">
+        <h2>Sign Up</h2>
+    </div>
+    <!-- Heading Ends Here -->
+
+    <!-- The Signup Form -->
+    <div id="formWrapper">
+        <div id="form" ng-app="bpit" ng-controller="bpitController">
+            
+            <!-- Input fields for Signup Form -->
+            
+            <!-- First Name -->
+            <div class="iconContainer">
+                <i class="material-icons">person</i>
+            </div>
+            <input type="text" placeholder="* firstname" ng-model="firstName" />
+
+            <!-- Last Name -->
+            <div class="iconContainer">
+                <i class="material-icons">person</i>
+            </div>
+            <input type="text" placeholder="* lastname" ng-model="lastName" />
+            
+            <!-- Password -->
+            <div class="iconContainer">
+                <i class="material-icons">lock</i>
+            </div>
+            <input type="password" placeholder="* password" ng-model="password" ng-keyup="checkLength(password)" ng-style="errorStylePassword"/>
+            <!-- Error Message if Password is less than 6 characters -->
+            <p class="error" ng-model="passwordError">{{passwordError}}</p>
+            
+            <!-- Confirm Password -->
+            <div class="iconContainer">
+                <i class="material-icons">lock</i>
+            </div>
+            <input type="password" placeholder="* confirm password" ng-model="confirmPassword" ng-keyup="confirmPass(password, confirmPassword)" ng-style="errorStyleConfirmPassword" />
+            <!-- Error Message if Passwords does not match -->
+            <p class="error" ng-model="confirmPasswordError">{{confirmPasswordError}}</p>
+            
+            <!-- Mobile Number -->
+            <div class="iconContainer">
+                <i class="material-icons">call</i>
+            </div>
+            <input type="number" placeholder="* mobile" min="0" ng-model="mobile" />
+
+            <!-- Email -->
+            <div class="iconContainer">
+                <i class="material-icons">email</i>
+            </div>
+            <input type="email" id='validate' placeholder="* email" ng-keyup="validate(email)" ng-style="errorStyleEmail" ng-model="email" />
+            <!-- Error msg if the email entered is not valid -->
+            <p class="error" ng-model="emailError">{{emailError}}</p>
+
+            <!-- Sign Up As: Teacher, Mentor or Mentee -->
+            <div class="iconContainer">
+                <i class="material-icons">person</i>
+            </div>
+            <select ng-options="item for item in post" ng-model="selectedPost"></select>
+            
+            <!-- Course -->
+            <div class="iconContainer">
+                <i class="material-icons">school</i>
+            </div>
+            <select ng-options="item for item in courses" ng-model="selectedCourse"></select>
+
+            <!-- Enrollment Number -->
+            <div class="iconContainer">
+                <i class="material-icons">credit_card</i>
+            </div>
+            <input type="number" placeholder="* enrollment number" min="0" ng-model="enrollmentNumber" ng-click="show()" />
+
+            <!-- Branch: Appears on the basis of enrollment number -->
+            <!-- Default: Hidden Field -->
+            <div class="iconContainer" ng-hide="{{toggleBranchField}}">
+                <i class="material-icons">school</i>
+            </div>
+            <select ng-hide="{{toggleBranchField}}" ng-options="item for item in branch" ng-model="selectedBranch" disabled></select>
+
+            <!-- Submit Button -->
+            <div id="submitButton">
+                <button ng-click="submitFunction()">SUBMIT</button>
+            </div>
+        </div>
+    </div>
+    <!-- Signup Form ends here -->
+
+    <!-- Footer -->
+    <footer></footer>
+
+    <!-- Including Controller Script -->
+    <script>
+    
+        // Declaring the app
+        var app = angular.module('bpit', []);
+
+        // Controller for the BPIT app
+        app.controller('bpitController', function($scope) {
+
+            // Options for 'Post' Field in the Form
+            $scope.post = ["Teacher", "Mentor", "Mentee"];
+
+            // Options for 'Course' Field in the Form
+            $scope.courses = ["BTech", "MBA", "BBA"];
+
+            // Options for "Branch' Field in the Form
+            $scope.branch = ["CSE", "IT", "ECE", "EEE"];
+
+            // Form variables
+            $scope.firstName = '';
+            $scope.lastname = '';
+            $scope.selectedPost = "Teacher";
+            $scope.selectedCourse = "BTech";
+            $scope.selectedBranch = "CSE";
+
+            // To toggle the visibility of 'Branch' Field
+            $scope.toggleBranchField = "true";
+
+            // Function to validate Email
+            $scope.validate = function(email) {
+                var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+                if(!re.test(email)) {
+                    $scope.emailError = "Enter a valid email address";
+                    $scope.errorStyleEmail = {
+                        "color" : "white",
+                        "background-color" : "rgba(255,0,0,0.7)"
+                    }
+                } else {
+                    $scope.emailError = "";
+                    $scope.errorStyleEmail = {
+                        "color" : "#333",
+                        "background-color" : "rgba(255,255,255,0.7)"
+                    }
+                }
+            }
+            // Email Validation function ends here
+
+            // Function to check the length of the password
+            $scope.checkLength = function(password) {
+                if(password.length<6) {
+                    $scope.passwordError = "Your password must be atleast 6 characters long";
+                    $scope.errorStylePassword = {
+                        "color" : "white",
+                        "background-color" : "rgba(255,0,0,0.7)"
+                    }
+                } else {
+                    $scope.passwordError = "";
+                    $scope.errorStylePassword = {
+                        "color" : "#333",
+                        "background-color" : "rgba(255,255,255,0.7)"
+                    }
+                }
+            }
+            // Password Length function ends here
+
+            // Function to match the passwords
+            $scope.confirmPass = function(password, confirmPassword) {
+                if(confirmPassword!=password) {
+                    $scope.confirmPasswordError = "Your password do not match";
+                    $scope.errorStyleConfirmPassword = {
+                        "color" : "white",
+                        "background-color" : "rgba(255,0,0,0.7)"
+                    }
+                } else {
+                    $scope.confirmPasswordError = "";
+                    $scope.errorStyleConfirmPassword = {
+                        "color" : "#333",
+                        "background-color" : "rgba(255,255,255,0.7)"
+                    }
+                }
+            }
+            // Passwords Matching function ends heres
+
+            // Function to toggle the view of 'Branch' Field
+            $scope.show = function() {
+                $scope.toggleBranchField = "false";
+            }
+
+            // Function for submitting the form data
+            $scope.submitFunction = function() {
+                //  Submit the data
+            } 
+        });
+    </script>
+
+</body>
+</html>
